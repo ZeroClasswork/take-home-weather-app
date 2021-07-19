@@ -1,0 +1,17 @@
+<form action="/zip" method="GET">
+  <div>
+    <label for="zip">Enter your zip code</label>
+    <input type="number" name="zip" id="zip" max="99999">
+  </div>
+  <div>
+    <button type="submit">Search</button>
+  </div>
+</form>
+
+<div>
+  <ul>
+    {{#each moods}}
+    <li>Someone is feeling like a {{this.moodRating}} in {{this.location}} at {{this.degreesF}}°F</li>
+    {{/each}}
+  </ul>
+</div>

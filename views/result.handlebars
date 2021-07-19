@@ -1,1 +1,13 @@
 <h1>In zip code {{zip}}, it is {{result}}°F</h1>
+
+<form action="/mood/new" method="POST">
+  <div>
+    <label for="moodRating">Enter your mood at this weather</label>
+    <input type="number" name="moodRating" id="moodRating" min="0" max="10">
+  </div>
+  <input type="hidden" value="{{zip}}" name="location" id="location">
+  <input type="hidden" value="{{result}}" name="degreesF" id="degreesF">
+  <div>
+    <button type="submit">Add Mood</button>
+  </div>
+</form>

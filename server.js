@@ -1,13 +1,19 @@
 const express = require('express')
 const app = express()
+const bodyParser = require("body-parser")
 const port = 3000
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 const request = require('request')
 const apiOptions = {
   server: 'http://localhost:3000'
 }
 
-require('dotenv').config();
+require('dotenv').config()
+
+require('./data/mood-db')
 
 const exphbs = require('express-handlebars')
 const Handlebars = require('handlebars')
@@ -18,8 +24,18 @@ app.engine('handlebars', exphbs({ defaultLayout: 'layout', handlebars: allowInse
 
 app.set('view engine', 'handlebars')
 
+const Mood = require('./models/mood')
+
 app.get('/', (req, res) => {
-  res.render('home')
+  Mood.find({})
+    .then((moods) => {
+      res.render('home', {moods})
+    })
+    .catch()
+})
+
+app.get('/zip', (req, res) => {
+  res.redirect('/zip/' + req.query.zip)
 })
 
 app.get('/zip/:zip', (req, res) => {
@@ -31,12 +47,22 @@ app.get('/zip/:zip', (req, res) => {
     if (err) {
       console.log(err)
     } else if (response.statusCode === 200) {
-      console.log(body)
       res.render('result', {'zip': req.params.zip, 'result': JSON.parse(body).data[0].coordinates[0].dates[0].value})
     } else {
       console.log(response)
     }
   })
+})
+
+app.post('/mood/new', (req, res) => {
+  var mood = new Mood(req.body)
+
+  mood
+    .save()
+    .then(
+      res.redirect('/')
+    )
+    .catch()
 })
 
 app.listen(port, () => {
